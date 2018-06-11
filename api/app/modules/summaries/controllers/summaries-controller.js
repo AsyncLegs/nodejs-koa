@@ -1,16 +1,20 @@
 import pick from 'lodash/pick';
 import { Summary } from '../models';
 import { SummaryService } from '../services';
+import AppError from '../../../helpers/appError';
 export default {
     async create(ctx) {
         const summaryData = {
             ...pick(ctx.request.body, Summary.createFields),
-            userId: ctx.user._id,
+            userHash: ctx.user.hash,
         };
-        const { _id } = await SummaryService.createSummary(summaryData);
-        const summary = await Summary.findById(_id);
-        ctx.status = 201;
-        ctx.body = { data: summary };
+        try {
+            const summary = await SummaryService.createSummary(summaryData);
+            ctx.status = 201;
+            ctx.body = { data: summary };
+        } catch (e) {
+            throw new AppError({ status: 400, ...e});
+        }
     },
     async update(ctx) {
         const {
@@ -18,38 +22,35 @@ export default {
                 body,
             },
             user: {
-                _id: userId,
+                hash: userHash,
             },
             summary,
         } = ctx;
 
-        const updateSummary = await SummaryService.updateSummary({ summary, userId, body });
-        if (updateSummary.error && updateSummary.error.length) {
-            ctx.throw(updateSummary.error.code, updateSummary.error.message);
+        try {
+            const updateSummary = await SummaryService.updateSummary({ summary, userHash, body });
+            ctx.body = {data: updateSummary};
+        } catch (e) {
+            throw new AppError({ status: 400, ...e});
         }
-
-        ctx.body = {data: updateSummary};
     },
 
     async delete(ctx) {
         const {
             user: {
-                _id: userId,
+                hash: userHash,
             },
             summary,
         } = ctx;
-        const deleteSummary = await SummaryService.deleteSummary(summary, userId);
-
-        if (deleteSummary.error) {
-            ctx.throw(deleteSummary.error.code, deleteSummary.error.message);
+        try {
+            const deleteSummary = await SummaryService.deleteSummary(summary, userHash);
+            ctx.body = {data: deleteSummary.hash};
+        } catch (e) {
+            throw new AppError({ status: 400, ...e});
         }
-
-        ctx.body = {data: deleteSummary};
     },
-    async getSummary(ctx) {
-        console.log(1);
-        console.log(summary);
 
+    async getSummary(ctx) {
         const { summary } = ctx;
 
         ctx.body = {data: pick(summary, Summary.createFields) };

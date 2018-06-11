@@ -5,6 +5,7 @@ import modules from './modules';
 import AppError from './helpers/appError';
 
 connectorsInit();
+
 global.AppError = AppError;
 const app = new Koa();
 

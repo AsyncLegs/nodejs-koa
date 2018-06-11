@@ -1,4 +1,4 @@
-import App from './App';
+import App from './app';
 import { PORT } from './config';
 
 const server = App.listen(PORT, (err) => {
