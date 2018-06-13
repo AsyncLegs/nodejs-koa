@@ -74,6 +74,6 @@ SummarySchema.pre('save', function(next) {
 
     next();
 });
-SummarySchema.statics.createFields = ['title', 'phone', 'skype', 'description', 'history', 'tags', 'hash'];
+SummarySchema.statics.createFields = ['title', 'phone', 'skype', 'description', 'history', 'tags'];
 
 export default mongoose.model('summary', SummarySchema);

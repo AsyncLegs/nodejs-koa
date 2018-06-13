@@ -8,7 +8,12 @@
     "lint": "eslint app",
     "lint:fix": "eslint --fix app",
     "dev": "nodemon --exec 'yarn lint && yarn start'",
-    "seed": "babel-node app/seeds"
+    "seed": "babel-node app/seeds",
+    "test": "NODE_ENV=test jest app"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "browser": false
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -19,17 +24,21 @@
     "babel-preset-stage-0": "^6.24.1",
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
-    "nodemon": "^1.17.5"
+    "jest": "^23.1.0",
+    "nodemon": "^1.17.5",
+    "supertest": "^3.1.0"
   },
   "dependencies": {
     "bcrypt": "^2.0.1",
     "config": "^1.30.0",
+    "deep-extend": "^0.6.0",
     "dotenv": "^6.0.0",
     "faker": "^4.1.0",
     "jsonwebtoken": "^8.2.2",
     "keymirror": "^0.1.1",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.1",
+    "koa-helmet": "^4.0.0",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "lodash": "^4.17.10",

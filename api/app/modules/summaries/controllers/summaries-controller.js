@@ -1,8 +1,8 @@
 import pick from 'lodash/pick';
 import { Summary } from '../models';
 import { SummaryService } from '../services';
-import { SEARCH_MAX_RESULT_PER_PAGE } from './../../../config';
 import AppError from '../../../helpers/appError';
+import parseSearchQuery from '../helpers/parseSearchQuery';
 export default {
     async create(ctx) {
         const summaryData = {
@@ -63,21 +63,8 @@ export default {
     },
 
     async search(ctx) {
-        const PAGE = 1;
         const queryParams = pick(ctx.request.query, ['title', 'tags', 'size', 'page']);
-        const filter = {
-            title: queryParams.title ? queryParams.title : '',
-            tags: queryParams.tags ? queryParams.tags.split(',') : [],
-            size: parseInt(queryParams.size),
-            page: parseInt(queryParams.page),
-        };
-
-        if (!filter.size || filter.size > SEARCH_MAX_RESULT_PER_PAGE) {
-            filter.size = SEARCH_MAX_RESULT_PER_PAGE;
-        }
-        if (!filter.page) {
-            filter.page = PAGE;
-        }
+        const filter = parseSearchQuery(queryParams);
         const { summaries, ...rest } = await SummaryService.search(filter);
         ctx.body = {
          data: summaries,

@@ -1,6 +1,10 @@
 {
     "port": 4000,
+    "jwt": {
+        "secret": "summary-secret"
+    },
     "search": {
-        "max_results_per_page": 25
+        "max_results_per_page": 25,
+        "default_page_number": 1
     }
 }
