@@ -1,12 +1,13 @@
 import pick from 'lodash/pick';
 import { Summary } from '../models';
 import { SummaryService } from '../services';
+import { SEARCH_MAX_RESULT_PER_PAGE } from './../../../config';
 import AppError from '../../../helpers/appError';
 export default {
     async create(ctx) {
         const summaryData = {
             ...pick(ctx.request.body, Summary.createFields),
-            userHash: ctx.user.hash,
+            userHash: ctx.state.user.hash,
         };
         try {
             const summary = await SummaryService.createSummary(summaryData);
@@ -21,10 +22,13 @@ export default {
             request: {
                 body,
             },
-            user: {
-                hash: userHash,
+            state: {
+                user: {
+                    hash: userHash,
+                },
+                summary,
             },
-            summary,
+
         } = ctx;
 
         try {
@@ -37,10 +41,12 @@ export default {
 
     async delete(ctx) {
         const {
-            user: {
-                hash: userHash,
+            state: {
+                user: {
+                    hash: userHash,
+                },
+                summary,
             },
-            summary,
         } = ctx;
         try {
             const deleteSummary = await SummaryService.deleteSummary(summary, userHash);
@@ -51,9 +57,33 @@ export default {
     },
 
     async getSummary(ctx) {
-        const { summary } = ctx;
+        const { state: { summary } } = ctx;
 
         ctx.body = {data: pick(summary, Summary.createFields) };
+    },
+
+    async search(ctx) {
+        const PAGE = 1;
+        const queryParams = pick(ctx.request.query, ['title', 'tags', 'size', 'page']);
+        const filter = {
+            title: queryParams.title ? queryParams.title : '',
+            tags: queryParams.tags ? queryParams.tags.split(',') : [],
+            size: parseInt(queryParams.size),
+            page: parseInt(queryParams.page),
+        };
+
+        if (!filter.size || filter.size > SEARCH_MAX_RESULT_PER_PAGE) {
+            filter.size = SEARCH_MAX_RESULT_PER_PAGE;
+        }
+        if (!filter.page) {
+            filter.page = PAGE;
+        }
+        const { summaries, ...rest } = await SummaryService.search(filter);
+        ctx.body = {
+         data: summaries,
+            filter,
+            ...rest,
+        };
     },
 };
 

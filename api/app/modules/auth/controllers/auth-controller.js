@@ -29,5 +29,8 @@ export default {
         const token = await jwtService.generateToken({ email });
         ctx.body = { data: token };
     },
+    currentUser(ctx) {
+        ctx.body = { data: ctx.state.user.serialized() };
+    },
 };
 

@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
+import pick from 'lodash/pick';
 import uniqueValidator from 'mongoose-unique-validator';
 import uuid from 'uuid/v4';
 
@@ -39,6 +40,10 @@ const UserSchema = new Schema({
 });
 
 UserSchema.statics.createFields = ['email', 'password', 'firstName', 'lastName', 'hash'];
+UserSchema.statics.exposedFields = ['email', 'firstName', 'lastName', 'hash'];
+UserSchema.methods.serialized = function() {
+    return pick(this, UserSchema.statics.exposedFields);
+};
 
 UserSchema.pre('save', function(next) {
     if (this.isModified('password')) {

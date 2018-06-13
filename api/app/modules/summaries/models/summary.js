@@ -5,13 +5,13 @@ const SummarySchema = new Schema({
         type: String,
         unique: 'Hash must be unique',
     },
-    userId: {
+    userHash: {
         type: String,
-        required: 'User id is required',
+        required: 'User hash is required',
     },
     title: {
         type: String,
-        required: 'Title is requried',
+        required: 'Title is required',
         trim: true,
     },
     phone: {
@@ -64,6 +64,8 @@ const SummarySchema = new Schema({
         },
     }],
 
+}, {
+    timestamps: true,
 });
 SummarySchema.pre('save', function(next) {
     if (!this.hash) {

@@ -11,7 +11,8 @@ router
     .post('/', auth(), summariesController.create)
     .put('/:hash', auth(), summariesController.update)
     .delete('/:hash', auth(), summariesController.delete)
-    .get('/:hash', summariesController.getSummary);
+    .get('/:hash', summariesController.getSummary)
+    .get('/', summariesController.search);
 
     export {
     Summary,

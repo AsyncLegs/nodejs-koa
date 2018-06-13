@@ -4,6 +4,6 @@ export default () => async (hash, ctx, next) => {
     if (!summary) {
         throw new AppError({status: 404, message: `Summary "${hash}" not found` });
     }
-    ctx.summary = summary;
+    ctx.state.summary = summary;
     await next();
 };
